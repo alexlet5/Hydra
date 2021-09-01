@@ -144,6 +144,14 @@ public class Board extends JPanel implements ActionListener
         {
             inGame = false;
         }
+        if(h[mouse_x/PIXEL_SIZE][mouse_y/PIXEL_SIZE].isSomething())
+        {
+            inGame = false;
+        }
+        if(h[mouse_x/PIXEL_SIZE][mouse_y/PIXEL_SIZE].isBullet())
+        {
+            inGame = false;
+        }
     }
 
 
@@ -203,7 +211,7 @@ public class Board extends JPanel implements ActionListener
         g.setFont(small);
         String msg = "Game Over";
         g.drawString(msg, (WIDTH - metr.stringWidth(msg)) / 2, HEIGHT / 2);
-        msg = "Score: " + Integer.toString(difficulty);
+        msg = Integer.toString(SCORE * difficulty);
         g.drawString(msg, (WIDTH - metr.stringWidth(msg)) / 2, (int) (HEIGHT / (1.5)));
     }
 

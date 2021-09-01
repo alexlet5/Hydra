@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.Objects;
+
 //добавить имена и рекорды
 class Main
 {
@@ -54,7 +56,7 @@ class Menu extends JFrame
             Image menuImage = iim.getImage();
             JLabel MenuImage = new JLabel(iim);
             add(MenuImage);
-            MenuImage.setBounds((WIDTH - 120) / 2, 00, 120, 80);
+            MenuImage.setBounds((WIDTH - 120) / 2, 0, 120, 80);
         } catch (Exception e)
         {
             System.err.println(e);
@@ -87,8 +89,8 @@ class Menu extends JFrame
         public void actionPerformed(ActionEvent e)
         {
             String command = e.getActionCommand();
-            if(command == "Start game"){start();}
-            if(command == "Exit game"){System.exit(0);}
+            if(Objects.equals(command, "Start game")){start();}
+            if(Objects.equals(command, "Exit game")){System.exit(0);}
             //if(command == "Game over"){toggleVisibility();}
 
 
