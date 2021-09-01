@@ -52,7 +52,7 @@ class Menu extends JFrame
 
         try
         {
-            ImageIcon iim = new ImageIcon("src/resources/menuImage.png");
+            ImageIcon iim = new ImageIcon("src/resources/head.png");
             JLabel MenuImage = new JLabel(iim);
             add(MenuImage);
             MenuImage.setBounds((WIDTH - 120) / 2, 0, 120, 80);
