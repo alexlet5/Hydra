@@ -12,7 +12,7 @@ class Main
 {
     public static void main(String[] args)
     {
-        Menu menu = new Menu();
+        new Menu();
     }
 }
 
@@ -20,7 +20,6 @@ class Menu extends JFrame
 {
     private final int WIDTH = 815;
     private final int HEIGHT = 840;
-    private final String[] diffList = {"Easy","Normal","Hard"};
     int difficulty = 1;
     Menu()
     {
@@ -41,7 +40,8 @@ class Menu extends JFrame
         exitButton.setActionCommand("Exit game");
         add(exitButton);
 
-        JComboBox difficultyBox = new JComboBox(diffList);
+        String[] diffList = {"Easy", "Normal", "Hard"};
+        JComboBox<String> difficultyBox = new JComboBox<>(diffList);
         difficultyBox.setBounds((WIDTH - 120) / 2, 190, 120, 20);
         difficultyBox.addItemListener(difficultyListener);
         add(difficultyBox);
@@ -53,13 +53,12 @@ class Menu extends JFrame
         try
         {
             ImageIcon iim = new ImageIcon("src/resources/menuImage.png");
-            Image menuImage = iim.getImage();
             JLabel MenuImage = new JLabel(iim);
             add(MenuImage);
             MenuImage.setBounds((WIDTH - 120) / 2, 0, 120, 80);
         } catch (Exception e)
         {
-            System.err.println(e);
+            e.printStackTrace();
         }
 
 
@@ -105,11 +104,6 @@ class Menu extends JFrame
             if (e.getItem()=="Easy") { difficulty = 1;}
             if (e.getItem()=="Normal") { difficulty = 2;}
             if (e.getItem()=="Hard") { difficulty = 3;}
-        }
-
-        public int getDifficulty()
-        {
-            return difficulty;
         }
     }
 

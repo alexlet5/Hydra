@@ -32,7 +32,7 @@ public class Board extends JPanel implements ActionListener
 
     private Timer timer;
 
-    private Hydra h[][];
+    private Hydra[][] h;
 
     int SCORE;
 
@@ -108,17 +108,29 @@ public class Board extends JPanel implements ActionListener
                             switch (d)
                             {
                                 case 0:
-                                    h[i + 1][j].makeHead();
-                                    return;
+                                    if(!h[i + 1][j].isSomething())
+                                    {
+                                        h[i + 1][j].makeHead();
+                                        return;
+                                    }
                                 case 1:
-                                    h[i - 1][j].makeHead();
-                                    return;
+                                    if(!h[i - 1][j].isSomething())
+                                    {
+                                        h[i - 1][j].makeHead();
+                                        return;
+                                    }
                                 case 2:
-                                    h[i][j + 1].makeHead();
-                                    return;
+                                    if(!h[i][j + 1].isSomething())
+                                    {
+                                        h[i][j + 1].makeHead();
+                                        return;
+                                    }
                                 case 3:
-                                    h[i][j - 1].makeHead();
-                                    return;
+                                    if(!h[i + 1][j - 1].isSomething())
+                                    {
+                                        h[i][j - 1].makeHead();
+                                        return;
+                                    }
                             }
                         } catch (ArrayIndexOutOfBoundsException ignored)
                         {
@@ -229,7 +241,7 @@ public class Board extends JPanel implements ActionListener
 
         } catch (Exception e)
         {
-            System.err.println(e);
+            e.printStackTrace();
         }
     }
 
