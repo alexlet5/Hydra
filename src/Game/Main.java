@@ -16,8 +16,8 @@ class Main
 
 class Menu extends JFrame
 {
-    private final int WIDTH = 800;
-    private final int HEIGHT = 600;
+    private final int WIDTH = 815;
+    private final int HEIGHT = 840;
     private final String[] diffList = {"Easy","Normal","Hard"};
     int difficulty = 1;
     Menu()
@@ -65,6 +65,8 @@ class Menu extends JFrame
         setLayout(null);
         setVisible(true);
         setResizable(false);
+        setFocusable(true);
+        requestFocusInWindow();
         Container c = getContentPane();
         c.setBackground(Color.gray);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -72,7 +74,10 @@ class Menu extends JFrame
 
     void start()
     {
-        Board g = new Board(difficulty);
+        Board board = new Board(WIDTH,HEIGHT,difficulty);
+        add(board);
+        board.setFocusable(true);
+        board.requestFocusInWindow();
     }
 
 
