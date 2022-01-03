@@ -3,18 +3,18 @@ package Game;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-
+import java.util.Objects;
 
 
 public class Board extends JPanel implements ActionListener
 {
+    private final int WIDTH = 615;
+    private final int HEIGHT = 640;
     private final boolean DEBUG = false;
-    private final int DELAY = 300;
-    private int WIDTH;//X
-    private int HEIGHT;//Y
-    private final int SQSIZE = 20;
+    private static final int DELAY = 300;
+    private final int SQUARESIZE = 20;
     private final int PIXEL_SIZE = 40;
-    private int difficulty;
+    private static diffList difficulty;
     private boolean leftDirection = false;
     private boolean rightDirection = true;
     private boolean upDirection = false;
@@ -30,41 +30,40 @@ public class Board extends JPanel implements ActionListener
     private ImageIcon bullet;
     private ImageIcon dead;
 
-    private Timer timer;
+    private static Hydra[][] h;
 
-    private Hydra[][] h;
-
-    int SCORE;
-
-    public Board(int w, int h, int diff)
+    static int SCORE;
+    GameFrame gameFrame;
+    public Board(diffList difficulty,GameFrame gf)
     {
-        WIDTH = w;
-        HEIGHT = h;
-        difficulty = diff;
-        System.out.println(difficulty);
+        gameFrame = gf;
+        requestFocusInWindow();
         setSize(WIDTH, HEIGHT);
         setLayout(null);
         setVisible(true);
         addKeyListener(new KbAdapter());
         setBounds(0, 0, WIDTH, HEIGHT);
         setBackground(Color.gray);
+        setFocusable(true);
         loadImages();
         initialize();
+    }
 
 
+    public void changeDifficulty(diffList diff)
+    {
+        difficulty = diff;
     }
 
     private void initialize()
     {
-
         SCORE = 0;
         spawnHydra();
-        timer = new Timer(DELAY, this);
+        Timer timer = new Timer(DELAY, this);
         timer.start();
-
     }
 
-    private void spawnHydra()
+    private static void spawnHydra()
     {
         h = new Hydra[20][20];
         for (int i = 0; i < 20; i++)
@@ -98,7 +97,7 @@ public class Board extends JPanel implements ActionListener
         {
             for (int j = 0; j < 20; j++)
             {
-                if(!Hopeless(i,j))
+                if (!Hopeless(i, j))
                 {
                     while (true)
                     {
@@ -108,25 +107,25 @@ public class Board extends JPanel implements ActionListener
                             switch (d)
                             {
                                 case 0:
-                                    if(!h[i + 1][j].isSomething())
+                                    if (!h[i + 1][j].isSomething())
                                     {
                                         h[i + 1][j].makeHead();
                                         return;
                                     }
                                 case 1:
-                                    if(!h[i - 1][j].isSomething())
+                                    if (!h[i - 1][j].isSomething())
                                     {
                                         h[i - 1][j].makeHead();
                                         return;
                                     }
                                 case 2:
-                                    if(!h[i][j + 1].isSomething())
+                                    if (!h[i][j + 1].isSomething())
                                     {
                                         h[i][j + 1].makeHead();
                                         return;
                                     }
                                 case 3:
-                                    if(!h[i + 1][j - 1].isSomething())
+                                    if (!h[i + 1][j - 1].isSomething())
                                     {
                                         h[i][j - 1].makeHead();
                                         return;
@@ -143,7 +142,7 @@ public class Board extends JPanel implements ActionListener
 
 
     @Override
-    public void paintComponent(Graphics g)
+    public void paintComponent(Graphics g) //paintcomponent ????
     {
         super.paintComponent(g);
 
@@ -156,11 +155,11 @@ public class Board extends JPanel implements ActionListener
         {
             inGame = false;
         }
-        if(h[mouse_x/PIXEL_SIZE][mouse_y/PIXEL_SIZE].isSomething())
+        if (h[mouse_x / PIXEL_SIZE][mouse_y / PIXEL_SIZE].isSomething())
         {
             inGame = false;
         }
-        if(h[mouse_x/PIXEL_SIZE][mouse_y/PIXEL_SIZE].isBullet())
+        if (h[mouse_x / PIXEL_SIZE][mouse_y / PIXEL_SIZE].isBullet())
         {
             inGame = false;
         }
@@ -223,8 +222,23 @@ public class Board extends JPanel implements ActionListener
         g.setFont(small);
         String msg = "Game Over";
         g.drawString(msg, (WIDTH - metr.stringWidth(msg)) / 2, HEIGHT / 2);
-        msg = Integer.toString(SCORE * difficulty);
+        msg = Integer.toString(SCORE); //* difficulty
         g.drawString(msg, (WIDTH - metr.stringWidth(msg)) / 2, (int) (HEIGHT / (1.5)));
+        JButton exitButton = new JButton("Main menu");
+        exitButton.setBounds((WIDTH-120)/2, HEIGHT-300, 120, 20);
+        exitButton.setActionCommand("Main menu");
+        exitButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                if (Objects.equals(e.getActionCommand(), "Main menu"))
+                {
+                    gameFrame.initMenu();
+                }
+            }
+        });
+        add(exitButton);
     }
 
     private void loadImages()
@@ -251,11 +265,11 @@ public class Board extends JPanel implements ActionListener
     {
         if (inGame)
         {
-            if(!DEBUG)checkCollision();
+            if (!DEBUG) checkCollision();
             checkHeads();
 
 
-            if(!DEBUG)move();
+            if (!DEBUG) move();
             hydraMove();
         }
         repaint();
@@ -269,13 +283,12 @@ public class Board extends JPanel implements ActionListener
             {
                 if (h[i][j].isHead())
                 {
-                    if(Hopeless(i,j))
+                    if (Hopeless(i, j))
                     {
                         System.err.println("DEAD");
                         h[i][j].die();
                         return;
-                    }
-                    else
+                    } else
                     {
                         while (true)
                         {
@@ -340,7 +353,9 @@ public class Board extends JPanel implements ActionListener
                     }
                 }
             }
-        }catch(ArrayIndexOutOfBoundsException ignored){}
+        } catch (ArrayIndexOutOfBoundsException ignored)
+        {
+        }
         return false;
     }
 
@@ -367,7 +382,6 @@ public class Board extends JPanel implements ActionListener
             mouse_y += PIXEL_SIZE;
         }
     }
-
 
 
     private class KbAdapter extends KeyAdapter
