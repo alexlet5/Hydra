@@ -1,6 +1,6 @@
 package Game;
 
-public enum Directions
+public enum DirectionsEnum
 {
     Left,
     Right,

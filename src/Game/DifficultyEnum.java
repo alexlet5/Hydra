@@ -1,6 +1,6 @@
 package Game;
 
-public enum diffList
+public enum DifficultyEnum
 {
     LOW,
     MEDIUM,

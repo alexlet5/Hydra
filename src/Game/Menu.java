@@ -10,17 +10,17 @@ import java.util.Objects;
 
 public class Menu extends JPanel
 {
-    private GameFrame gameFrame;
-    private diffList difficulty = diffList.LOW;
+
+    private final GameFrame gameFrame;
+    private DifficultyEnum difficulty = DifficultyEnum.LOW;
+    private final int WIDTH = Screen.getWidth();
+    private final int HEIGHT = Screen.getHeight();
+
     Menu(GameFrame gf)
     {
         gameFrame = gf;
 
-        setSize(WIDTH, HEIGHT);
-        setLayout(new FlowLayout());
-        setBounds(0, 0, WIDTH, HEIGHT);
         setBackground(Color.gray);
-
         ActionListener menuActionListener = new MenuActionListener();
         ItemListener difficultyListener = new DifficultyChangeListener();
 
@@ -36,8 +36,7 @@ public class Menu extends JPanel
         exitButton.setActionCommand("Exit game");
         add(exitButton);
 
-        //String[] diffList = {diffList.LOW.toString(), diffList.MEDIUM.toString(), diffList.HIGH.toString()};
-        JComboBox<diffList> difficultyBox = new JComboBox<>(diffList.values());
+        JComboBox<DifficultyEnum> difficultyBox = new JComboBox<>(DifficultyEnum.values());
         difficultyBox.setBounds((WIDTH - 120) / 2, 190, 120, 20);
         difficultyBox.addItemListener(difficultyListener);
         add(difficultyBox);
@@ -52,7 +51,8 @@ public class Menu extends JPanel
             JLabel MenuImage = new JLabel(iim);
             add(MenuImage);
             MenuImage.setBounds((WIDTH - 120) / 2, 0, 120, 80);
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
             e.printStackTrace();
         }
@@ -80,7 +80,7 @@ public class Menu extends JPanel
         @Override
         public void itemStateChanged(ItemEvent e)
         {
-            difficulty = (diffList) e.getItem();
+            difficulty = (DifficultyEnum) e.getItem();
         }
     }
 

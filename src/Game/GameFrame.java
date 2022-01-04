@@ -5,38 +5,52 @@ import java.awt.*;
 
 public class GameFrame extends JFrame
 {
-    private final int WIDTH = 615;
-    private final int HEIGHT = 640;
-    private boolean first = true;
+    private final int WIDTH = Screen.getWidth();
+    private final int HEIGHT = Screen.getHeight();
     private Menu menu;
     private Board board;
     //private GameOver gameOver;
     public GameFrame()
     {
         super("Hydra");
-        setSize(WIDTH, HEIGHT);
+        //setSize(WIDTH, HEIGHT);
+        //setBounds(10, 10, WIDTH, HEIGHT);
+        setResizable(false);
+        //setMinimumSize(new Dimension(WIDTH,HEIGHT));
+        //setMaximumSize(new Dimension(WIDTH,HEIGHT));
+        //setPreferredSize(new Dimension(WIDTH,HEIGHT));
+
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         initMenu();
+        //initBoard(DifficultyEnum.LOW);
     }
     public void initMenu()
     {
-        if(!first)
-        {
+        if(board != null)
             remove(board);
-            board = null;
-        }
+
+        board = null;
         menu = new Menu(this);
         add(menu);
+        pack();
         setVisible(true);
-        first = false;
     }
 
-    public void initBoard(diffList difficulty)
+    public void initBoard(DifficultyEnum difficulty)
     {
-        remove(menu);
-        menu = null;
+        if(menu != null)
+            remove(menu);
 
+        menu = null;
         board = new Board(difficulty,this);
         add(board);
+        pack();
+        board.requestFocus();
         setVisible(true);
+    }
+    @Override
+    public Dimension getPreferredSize()
+    {
+        return new Dimension(WIDTH+17,HEIGHT+40);
     }
 }
