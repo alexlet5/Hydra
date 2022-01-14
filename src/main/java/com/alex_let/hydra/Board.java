@@ -418,4 +418,12 @@ public class Board extends JPanel implements ActionListener
             }
         }
     }
+
+    private enum DirectionsEnum
+    {
+        Left,
+        Right,
+        Up,
+        Down
+    }
 }
