@@ -119,7 +119,7 @@ public class Board extends JPanel implements ActionListener
                                 switch (d)
                                 {
                                     case 0:
-                                        hydra[i + 1][j].makeHeadIfEmpty();
+                                        hydra[i + 1][j].makeHead();
                                             return;
                                     case 1:
                                         hydra[i - 1][j].makeHead();
@@ -131,7 +131,7 @@ public class Board extends JPanel implements ActionListener
                                         hydra[i][j - 1].makeHead();
                                         return;
                                 }
-                            } catch (ArrayIndexOutOfBoundsException ignored)
+                            } catch (Exception ignored)
                             {
                             }
                         }
@@ -319,7 +319,7 @@ public class Board extends JPanel implements ActionListener
                                             return;
                                         }
                                 }
-                            } catch (ArrayIndexOutOfBoundsException ignored)
+                            } catch (Exception ignored)
                             {
                             }
                         }

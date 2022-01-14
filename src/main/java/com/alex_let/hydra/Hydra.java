@@ -24,17 +24,12 @@ public class Hydra
         this.type = BodyTypes.DEAD;
     }
 
-    public void makeHead()
-    {
-        this.type = BodyTypes.HEAD;
-    }
-
-    public void makeHeadIfEmpty()
+    public void makeHead() throws Exception
     {
         if (this.type == BodyTypes.EMPTY)
-        {
             this.type = BodyTypes.HEAD;
-        }
+        else
+            throw new Exception("Hydra already has something in this cell");
     }
 
     public boolean isBody()
