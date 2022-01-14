@@ -1,4 +1,4 @@
-package Game;
+package com.alex_let.hydra;
 
 import javax.swing.*;
 import java.awt.*;
@@ -41,13 +41,13 @@ public class Menu extends JPanel
         difficultyBox.addItemListener(difficultyListener);
         add(difficultyBox);
 
-        JLabel highScoreLabel = new JLabel("High scores: ");
+        /*JLabel highScoreLabel = new JLabel("High scores: ");
         highScoreLabel.setBounds((WIDTH - 100) / 2, 350, 120, 20);
-        add(highScoreLabel);
+        add(highScoreLabel);*/
 
         try
         {
-            ImageIcon iim = new ImageIcon("src/resources/head.png");
+            ImageIcon iim = new ImageIcon("src/main/resources/head.png");
             JLabel MenuImage = new JLabel(iim);
             add(MenuImage);
             MenuImage.setBounds((WIDTH - 120) / 2, 0, 120, 80);
