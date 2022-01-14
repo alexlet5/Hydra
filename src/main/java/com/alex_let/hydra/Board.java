@@ -1,4 +1,4 @@
-package Game;
+package com.alex_let.hydra;
 
 import javax.swing.*;
 import java.awt.*;
@@ -193,17 +193,21 @@ public class Board extends JPanel implements ActionListener
 
     private void gameOver(Graphics g)
     {
-        Font small = new Font("Comic Sans", Font.BOLD, 14);
-        FontMetrics metr = getFontMetrics(small);
         g.setColor(Color.white);
+        Font small = new Font("Comic Sans", Font.BOLD, 14);
         g.setFont(small);
+        FontMetrics metr = getFontMetrics(small);
+
         String msg = "Game Over";
         g.drawString(msg, (WIDTH - metr.stringWidth(msg))/2, HEIGHT/2);
-        msg = Integer.toString(SCORE); //* difficulty
-        g.drawString(msg, (WIDTH - metr.stringWidth(msg))/2, (int) (HEIGHT/(1.5)));
+
+        msg = Integer.toString(SCORE); //difficulty
+        g.drawString(msg , (WIDTH - metr.stringWidth(msg))/2, (int) (HEIGHT/(1.5)));
+
         JButton exitButton = new JButton("Main menu");
         exitButton.setBounds((WIDTH - 120)/2, HEIGHT - 300, 120, 20);
         exitButton.setActionCommand("Main menu");
+
         exitButton.addActionListener(new ActionListener()
         {
             @Override
@@ -222,15 +226,14 @@ public class Board extends JPanel implements ActionListener
     {
         try
         {
-            mouse = new ImageIcon("src/resources/mouse.png");
-            hole = new ImageIcon("src/resources/hole.png");
-            body = new ImageIcon("src/resources/body.png");
-            head = new ImageIcon("src/resources/head.png");
-            bullet = new ImageIcon("src/resources/bullet.png");
-            dead = new ImageIcon("src/resources/dead.png");
-
-
-        } catch (Exception e)
+            mouse = new ImageIcon("src/main/resources/mouse.png");
+            hole = new ImageIcon("src/main/resources/hole.png");
+            body = new ImageIcon("src/main/resources/body.png");
+            head = new ImageIcon("src/main/resources/head.png");
+            bullet = new ImageIcon("src/main/resources/bullet.png");
+            dead = new ImageIcon("src/main/resources/dead.png");
+        }
+        catch (Exception e)
         {
             e.printStackTrace();
         }
@@ -267,13 +270,15 @@ public class Board extends JPanel implements ActionListener
                         System.err.println("DEAD");
                         h[i][j].die();
                         return;
-                    } else
+                    }
+                    else
                     {
                         while (true)
                         {
                             try
                             {
-                                int d = (int) (Math.random()*4);
+                                int d = (int) (Math.random()*1000 %4);
+                                //System.out.println(d);
                                 switch (d)
                                 {
                                     default:

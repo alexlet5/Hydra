@@ -1,4 +1,4 @@
-package Game;
+package com.alex_let.hydra;
 
 public class Hydra
 {

@@ -1,4 +1,4 @@
-package Game;
+package com.alex_let.hydra;
 
 import javax.swing.*;
 import java.awt.*;
@@ -7,7 +7,7 @@ public class GameFrame extends JFrame
 {
     private final int WIDTH = Screen.getWidth();
     private final int HEIGHT = Screen.getHeight();
-    private Menu menu;
+    private com.alex_let.hydra.Menu menu;
     private Board board;
     //private GameOver gameOver;
     public GameFrame()
