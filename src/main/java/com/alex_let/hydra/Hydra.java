@@ -2,60 +2,67 @@ package com.alex_let.hydra;
 
 public class Hydra
 {
-    char type;
-    char rotation;
+    BodyTypes type;
+
+    public Hydra()
+    {
+        this.type = BodyTypes.EMPTY;
+    }
 
     public void spawn()
     {
-        this.type = 's';
-    }
-    void body(char r)
-    {
-        this.type = 'b';
-        this.rotation = 'r';
+        this.type = BodyTypes.HOLE;
     }
 
     public void toBody()
     {
-        this.type = 'b';
+        type = BodyTypes.BODY;
     }
 
-    public boolean isHead()
+    public void toDead()
     {
-        return type == 'h';
-    }
-
-    public void die()
-    {
-        this.type = 'd';
-    }
-
-    public boolean isBody()
-    {
-        if(type == 'b' || type == 's') return true;
-        else return false;
-    }
-
-    public boolean isSomething()
-    {
-        if(type == 'b' || type == 's' || type == 'h' || type == 'd') return true;
-        else return false;
-    }
-
-    public boolean isBullet()
-    {
-        if(type == 'a') return true;
-        else return false;
-    }
-
-
-    public char getType()
-    {
-        return type;
+        this.type = BodyTypes.DEAD;
     }
 
     public void makeHead()
     {
-        this.type = 'h';
+        this.type = BodyTypes.HEAD;
+    }
+
+    public void makeHeadIfEmpty()
+    {
+        if (this.type == BodyTypes.EMPTY)
+        {
+            this.type = BodyTypes.HEAD;
+        }
+    }
+
+    public boolean isBody()
+    {
+        return type.equals(BodyTypes.BODY);
+    }
+
+    public boolean isSomething()
+    {
+        return !type.equals(BodyTypes.EMPTY);
+    }
+
+    public boolean isHead()
+    {
+        return type.equals(BodyTypes.HEAD);
+    }
+
+    public boolean isHole()
+    {
+        return type.equals(BodyTypes.HOLE);
+    }
+
+    public boolean isDead(){ return type.equals(BodyTypes.DEAD);}
+
+    public BodyTypes getState(){ return type;}
+
+    private enum BodyTypes
+    {
+        EMPTY, HEAD, DEAD, BODY, HOLE
     }
 }

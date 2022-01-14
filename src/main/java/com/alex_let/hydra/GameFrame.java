@@ -36,13 +36,13 @@ public class GameFrame extends JFrame
         setVisible(true);
     }
 
-    public void initBoard(DifficultyEnum difficulty)
+    public void initBoard()
     {
         if(menu != null)
             remove(menu);
 
         menu = null;
-        board = new Board(difficulty,this);
+        board = new Board(this);
         add(board);
         pack();
         board.requestFocus();

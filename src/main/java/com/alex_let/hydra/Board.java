@@ -2,37 +2,42 @@ package com.alex_let.hydra;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.Objects;
 
 
 public class Board extends JPanel implements ActionListener
 {
-    private static final int DELAY = 400;
-    private static DifficultyEnum difficulty;
-    private static DirectionsEnum direction = DirectionsEnum.Right;
-    private static Hydra[][] h;
-    private static int SCORE;
+    //player stops and becomes invincible
     private final boolean DEBUG = false;
+    //tick time
+    private static final int DELAY = 400;
+
+    private final GameFrame gameFrame;
+
+    private static DirectionsEnum direction = DirectionsEnum.Right;
+    private static Hydra[][] hydra;
+    private static int SCORE;
     private final int WIDTH = Screen.getWidth();
     private final int HEIGHT = Screen.getHeight();
     private final int PIXEL_SIZE = Screen.getPixelSize();
     private final int X = WIDTH/PIXEL_SIZE;
     private final int Y = HEIGHT/PIXEL_SIZE;
-    private final GameFrame gameFrame;
     private boolean inGame = true;
-    private int mouse_x = 200;
-    private int mouse_y = 200;
+    private int mouseX = 200;
+    private int mouseY = 200;
     private ImageIcon body;
     private ImageIcon head;
     private ImageIcon hole;
     private ImageIcon mouse;
-    private ImageIcon bullet;
     private ImageIcon dead;
 
-    public Board(DifficultyEnum difficulty, GameFrame gf)
+    public Board(GameFrame gameFrame)
     {
-        gameFrame = gf;
+        this.gameFrame = gameFrame;
         addKeyListener(new KbAdapter());
         setBackground(Color.gray);
         loadImages();
@@ -49,15 +54,35 @@ public class Board extends JPanel implements ActionListener
 
     private void spawnHydra()
     {
-        h = new Hydra[X][Y];
+        hydra = new Hydra[X][Y];
         for (int i = 0; i < X; i++)
         {
             for (int j = 0; j < Y; j++)
             {
-                h[i][j] = new Hydra();
+                hydra[i][j] = new Hydra();
             }
         }
-        h[0][0].spawn();
+        hydraRandomSpawner();
+    }
+
+    private void hydraRandomSpawner()
+    {
+        int d = (int) (Math.random()*4);
+        switch (d)
+        {
+            case (0):
+                hydra[0][0].spawn();
+                break;
+            case (1):
+                hydra[X-1][0].spawn();
+                break;
+            case (2):
+                hydra[0][Y-1].spawn();
+                break;
+            case (3):
+                hydra[X-1][Y-1].spawn();
+                break;
+        }
     }
 
     private void checkHeads()
@@ -66,7 +91,7 @@ public class Board extends JPanel implements ActionListener
         {
             for (int j = 0; j < Y; j++)
             {
-                if (h[i][j].isHead())
+                if (hydra[i][j].isHead())
                 {
                     return;
                 }
@@ -75,48 +100,40 @@ public class Board extends JPanel implements ActionListener
         makeHead();
     }
 
+
     private void makeHead()
     {
         for (int i = 0; i < X; i++)
         {
             for (int j = 0; j < Y; j++)
             {
-                if (!Hopeless(i, j))
+                if (hydra[i][j].isSomething())
                 {
-                    while (true)
+                    if (!Hopeless(i, j))
                     {
-                        int d = (int) (Math.random()*4);
-                        try
+                        while (true)
                         {
-                            switch (d)
+                            int d = (int) (Math.random()*4);
+                            try
                             {
-                                case 0:
-                                    if (!h[i + 1][j].isSomething())
-                                    {
-                                        h[i + 1][j].makeHead();
+                                switch (d)
+                                {
+                                    case 0:
+                                        hydra[i + 1][j].makeHeadIfEmpty();
+                                            return;
+                                    case 1:
+                                        hydra[i - 1][j].makeHead();
+                                            return;
+                                    case 2:
+                                        hydra[i][j + 1].makeHead();
+                                            return;
+                                    case 3:
+                                        hydra[i][j - 1].makeHead();
                                         return;
-                                    }
-                                case 1:
-                                    if (!h[i - 1][j].isSomething())
-                                    {
-                                        h[i - 1][j].makeHead();
-                                        return;
-                                    }
-                                case 2:
-                                    if (!h[i][j + 1].isSomething())
-                                    {
-                                        h[i][j + 1].makeHead();
-                                        return;
-                                    }
-                                case 3:
-                                    if (!h[i + 1][j - 1].isSomething())
-                                    {
-                                        h[i][j - 1].makeHead();
-                                        return;
-                                    }
+                                }
+                            } catch (ArrayIndexOutOfBoundsException ignored)
+                            {
                             }
-                        } catch (ArrayIndexOutOfBoundsException ignored)
-                        {
                         }
                     }
                 }
@@ -134,13 +151,10 @@ public class Board extends JPanel implements ActionListener
 
     private void checkCollision()
     {
-        if ((mouse_x >= WIDTH - PIXEL_SIZE) || (mouse_x <= 0) || (mouse_y >= HEIGHT - PIXEL_SIZE) || (mouse_y <= 0))
+        if ((mouseX >= WIDTH - PIXEL_SIZE) || (mouseX <= 0) || (mouseY >= HEIGHT - PIXEL_SIZE) || (mouseY <= 0))
         {
             inGame = false;
-        } else if (h[mouse_x/PIXEL_SIZE][mouse_y/PIXEL_SIZE].isSomething())
-        {
-            inGame = false;
-        } else if (h[mouse_x/PIXEL_SIZE][mouse_y/PIXEL_SIZE].isBullet())
+        } else if (hydra[mouseX/PIXEL_SIZE][mouseY/PIXEL_SIZE].isSomething())
         {
             inGame = false;
         }
@@ -160,25 +174,25 @@ public class Board extends JPanel implements ActionListener
                 g.drawLine(i, 0, i, HEIGHT);
             }
 
-            g.drawImage(mouse.getImage(), mouse_x, mouse_y, this);
+            g.drawImage(mouse.getImage(), mouseX, mouseY, this);
 
             for (int i = 0; i < X; i++)
             {
                 for (int j = 0; j < Y; j++)
                 {
-                    if (h[i][j].getType() == 's')
+                    if (hydra[i][j].isHole())
                     {
                         g.drawImage(hole.getImage(), i*PIXEL_SIZE, j*PIXEL_SIZE, this);
                     }
-                    if (h[i][j].getType() == 'b')
+                    if (hydra[i][j].isBody())
                     {
                         g.drawImage(body.getImage(), i*PIXEL_SIZE, j*PIXEL_SIZE, this);
                     }
-                    if (h[i][j].getType() == 'h')
+                    if (hydra[i][j].isHead())
                     {
                         g.drawImage(head.getImage(), i*PIXEL_SIZE, j*PIXEL_SIZE, this);
                     }
-                    if (h[i][j].getType() == 'd')
+                    if (hydra[i][j].isDead())
                     {
                         g.drawImage(dead.getImage(), i*PIXEL_SIZE, j*PIXEL_SIZE, this);
                     }
@@ -208,15 +222,11 @@ public class Board extends JPanel implements ActionListener
         exitButton.setBounds((WIDTH - 120)/2, HEIGHT - 300, 120, 20);
         exitButton.setActionCommand("Main menu");
 
-        exitButton.addActionListener(new ActionListener()
+        exitButton.addActionListener(e ->
         {
-            @Override
-            public void actionPerformed(ActionEvent e)
+            if (Objects.equals(e.getActionCommand(), "Main menu"))
             {
-                if (Objects.equals(e.getActionCommand(), "Main menu"))
-                {
-                    gameFrame.initMenu();
-                }
+                gameFrame.initMenu();
             }
         });
         add(exitButton);
@@ -230,7 +240,6 @@ public class Board extends JPanel implements ActionListener
             hole = new ImageIcon("src/main/resources/hole.png");
             body = new ImageIcon("src/main/resources/body.png");
             head = new ImageIcon("src/main/resources/head.png");
-            bullet = new ImageIcon("src/main/resources/bullet.png");
             dead = new ImageIcon("src/main/resources/dead.png");
         }
         catch (Exception e)
@@ -263,12 +272,12 @@ public class Board extends JPanel implements ActionListener
         {
             for (int j = 0; j < Y; j++)
             {
-                if (h[i][j].isHead())
+                if (hydra[i][j].isHead())
                 {
                     if (Hopeless(i, j))
                     {
                         System.err.println("DEAD");
-                        h[i][j].die();
+                        hydra[i][j].toDead();
                         return;
                     }
                     else
@@ -277,36 +286,36 @@ public class Board extends JPanel implements ActionListener
                         {
                             try
                             {
-                                int d = (int) (Math.random()*1000 %4);
-                                //System.out.println(d);
-                                switch (d)
+                                int dir = (int) (Math.random()*1000 %4);
+                                //System.out.println(dir);
+                                switch (dir)
                                 {
                                     default:
-                                        if (!h[i + 1][j].isBody())
+                                        if (!hydra[i + 1][j].isBody())
                                         {
-                                            h[i + 1][j].makeHead();
-                                            h[i][j].toBody();
+                                            hydra[i + 1][j].makeHead();
+                                            hydra[i][j].toBody();
                                             return;
                                         }
                                     case 1:
-                                        if (!h[i - 1][j].isBody())
+                                        if (!hydra[i - 1][j].isBody())
                                         {
-                                            h[i - 1][j].makeHead();
-                                            h[i][j].toBody();
+                                            hydra[i - 1][j].makeHead();
+                                            hydra[i][j].toBody();
                                             return;
                                         }
                                     case 2:
-                                        if (!h[i][j + 1].isBody())
+                                        if (!hydra[i][j + 1].isBody())
                                         {
-                                            h[i][j + 1].makeHead();
-                                            h[i][j].toBody();
+                                            hydra[i][j + 1].makeHead();
+                                            hydra[i][j].toBody();
                                             return;
                                         }
                                     case 3:
-                                        if (!h[i][j - 1].isBody())
+                                        if (!hydra[i][j - 1].isBody())
                                         {
-                                            h[i][j - 1].makeHead();
-                                            h[i][j].toBody();
+                                            hydra[i][j - 1].makeHead();
+                                            hydra[i][j].toBody();
                                             return;
                                         }
                                 }
@@ -324,13 +333,13 @@ public class Board extends JPanel implements ActionListener
     {
         try
         {
-            if (i == X - 1 || h[i + 1][j].isSomething())//справа
+            if (i == X - 1 || hydra[i + 1][j].isSomething())//справа
             {
-                if (i == 0 || h[i - 1][j].isSomething())//слева
+                if (i == 0 || hydra[i - 1][j].isSomething())//слева
                 {
-                    if (j == Y - 1 || h[i][j + 1].isSomething())//снизу
+                    if (j == Y - 1 || hydra[i][j + 1].isSomething())//снизу
                     {
-                        if (j == 0 || h[i][j - 1].isSomething())//сверху
+                        if (j == 0 || hydra[i][j - 1].isSomething())//сверху
                         {
                             return true;
                         }
@@ -350,25 +359,25 @@ public class Board extends JPanel implements ActionListener
         {
             case Right:
             {
-                mouse_x += PIXEL_SIZE;
+                mouseX += PIXEL_SIZE;
                 break;
             }
 
             case Left:
             {
-                mouse_x -= PIXEL_SIZE;
+                mouseX -= PIXEL_SIZE;
                 break;
             }
 
             case Up:
             {
-                mouse_y -= PIXEL_SIZE;
+                mouseY -= PIXEL_SIZE;
                 break;
             }
 
             case Down:
             {
-                mouse_y += PIXEL_SIZE;
+                mouseY += PIXEL_SIZE;
                 break;
             }
         }
